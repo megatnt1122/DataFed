@@ -9,6 +9,11 @@ enum class ProtocolType {
   ZQTP // ZeroMQ Transport Layer Protocol
 };
 
+enum class ProtocolTechnology {
+  CURL,
+  ZEROMQ
+};
+
 } // namespace SDMS
 
 #endif // PROTOCOL_TYPES_HPP
