@@ -4,3 +4,9 @@
 [submodule "external/protobuf"]
 	path = external/protobuf
 	url = https://github.com/protocolbuffers/protobuf.git
+[submodule "external/openssl"]
+	path = external/openssl
+	url = https://github.com/openssl/openssl
+[submodule "external/curl"]
+	path = external/curl
+	url = https://github.com/curl/curl
