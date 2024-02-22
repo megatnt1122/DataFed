@@ -20,6 +20,8 @@ ARG DATAFED_DIR
 ARG BUILD_DIR
 ARG DATAFED_INSTALL_PATH
 
+SHELL ["/bin/bash", "-c"]
+
 ENV BUILD_DIR="${BUILD_DIR}"
 ENV DATAFED_DIR="${DATAFED_DIR}"
 
@@ -39,10 +41,6 @@ RUN adduser --disabled-password --gecos "" datafed
 RUN mkdir -p ${DATAFED_DIR}
 RUN mkdir -p /opt/datafed
 RUN mkdir -p /var/log/datafed
-RUN chown -R datafed:root /opt/datafed
-RUN chown -R datafed:root /var/log/datafed
-RUN chown -R datafed:root ${DATAFED_DIR}
-
 RUN curl -OL https://download.arangodb.com/arangodb38/DEBIAN/Release.key; apt-key add - < Release.key
 #RUN wget -q https://www.arangodb.com/repositories/arangodb38/DEBIAN/Release.key -O- | apt-key add -
 RUN echo 'deb https://download.arangodb.com/arangodb38/DEBIAN/ /' | tee /etc/apt/sources.list.d/arangodb.list
@@ -50,7 +48,9 @@ RUN apt update
 RUN apt install arangodb3-client -y
 RUN arangosh --version
 
-USER root
+RUN chown -R datafed:root /opt/datafed
+RUN chown -R datafed:root /var/log/datafed
+RUN chown -R datafed:root ${DATAFED_DIR}
 
 WORKDIR ${DATAFED_DIR}
 

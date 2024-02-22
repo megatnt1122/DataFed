@@ -41,7 +41,7 @@ if [ "$#" -eq 0 ]; then
   exec "bash"
   exit 0
 fi
-
+su datafed -c "env"
 cd "$DATAFED_INSTALL_PATH/web"
 datafed_ws_exec=$(basename "$1")
 if [ "${datafed_ws_exec}" = "datafed-ws.js" ]

@@ -5,7 +5,10 @@
 set -euf -o pipefail
 
 if [ -n "$UID" ]; then
+    OLD_ID=$(su datafed -c "id -u")
     usermod -u $UID datafed
+    find /datafed -uid "$OLD_ID" -exec chown -h "$UID" {} + >/dev/null 2>&1
+    find /opt/datafed -uid "$OLD_ID" -exec chown -h "$UID" {} + >/dev/null 2>&1
 fi
 
 

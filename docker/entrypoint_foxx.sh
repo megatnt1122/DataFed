@@ -2,8 +2,12 @@
 
 set -euf -o pipefail
 
+echo "Changing UID to $UID"
 if [ -n "$UID" ]; then
-    usermod -u $UID datafed
+    OLD_ID=$(su datafed -c "id -u")
+    usermod -u "$UID" datafed
+    find /datafed -uid "$OLD_ID" -exec chown -h "$UID" {} + >/dev/null 2>&1
+    find /opt/datafed -uid "$OLD_ID" -exec chown -h "$UID" {} + >/dev/null 2>&1
 fi
 
 SCRIPT=$(realpath "$0")
@@ -13,7 +17,11 @@ PROJECT_ROOT=$(realpath "${SOURCE}/../")
 log_path="$DATAFED_DEFAULT_LOG_PATH"
 if [ ! -d "${log_path}" ]
 then
-  su -c "mkdir -p ${log_path}" datafed
+  ls -la /
+  ls -la /datafed/
+  su datafed -c "mkdir -p ${log_path}"
+  id -u datafed
+  ls -la /datafed/
 fi
 
 cd "${PROJECT_ROOT}"

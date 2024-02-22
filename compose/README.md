@@ -15,8 +15,20 @@ Create the .env file fill in the missing components that are required.
 
 Stand up the core services.
 
+WARNING!!! - If you already have env variables defined in your shell
+environment they will take precedence over whatever is in the .env file in your
+local directory.
+
 ```bash
 docker compose -f ./compose_core.yml up
+```
+
+If you want to run your compose file without inheritting the env variables in your
+session, you can unset them with the convenience script before running docker compose up.
+
+```bash
+source unset_env.sh
+docker compose --env-file ./.env -f ./compose_core.yml up
 ```
 
 At this point you should be able to navigate in your browser to
