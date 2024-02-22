@@ -11,6 +11,7 @@ SOURCE=$(dirname "$SCRIPT")
 PROJECT_ROOT=$(realpath "${SOURCE}/../..")
 
 env
+
 "${PROJECT_ROOT}/scripts/generate_datafed.sh"
 "${PROJECT_ROOT}/scripts/generate_core_config.sh"
 "${PROJECT_ROOT}/scripts/install_core.sh"
@@ -36,7 +37,7 @@ if [ "${datafed_core_exec}" = "datafed-core" ]
 then
   # Send output to log file
   # For this to work all commands must be passed in as a single string
-  su datafed -c '"$@"' -- argv0 "$@" 2>&1 | tee "$log_path/datafed-core.log"
+  su datafed -c '"$@"' -- argv0 "$@" 2>&1 | su datafed -c "tee $log_path/datafed-core.log"
 else
   echo "Not sending output to datafed-core.log"
   # If not do not by default send to log file
