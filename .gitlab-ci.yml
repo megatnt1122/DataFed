@@ -559,7 +559,7 @@ end-to-end-repo-setup:
     HOST_LOG_FILE_PATH: "/shared/logs"
     CONTAINER_LOG_FILE_PATH: "/datafed/logs"
   stage: end-to-end-setup
-  needs: ["end-to-end-core-setup"]
+  needs: ["end-to-end-ws-setup"]
   tags:
     - ci-datafed-globus
     - docker
