@@ -4,8 +4,8 @@ set -uf -o pipefail
 
 SCRIPT=$(realpath "$0")
 SOURCE=$(dirname "$SCRIPT")
-PROJECT_ROOT=$(realpath ${SOURCE}/../../)
-source ${PROJECT_ROOT}/config/datafed.sh
+PROJECT_ROOT=$(realpath "${SOURCE}/../../")
+source "${PROJECT_ROOT}/config/datafed.sh"
 
 Help()
 {
@@ -88,9 +88,9 @@ while [ : ]; do
 done
 
 
-public_key=$(cat ${DATAFED_INSTALL_PATH}/keys/datafed-repo-key.pub)
+public_key=$(cat "${DATAFED_INSTALL_PATH}/keys/datafed-repo-key.pub")
 
-GATEWAY_NAME="${DATAFED_GCS_ROOT_NAME} Storage Gateway"
+# GATEWAY_NAME="${DATAFED_GCS_ROOT_NAME} Storage Gateway"
 GUEST_COLLECTION_NAME="${DATAFED_GCS_ROOT_NAME} Collection Guest"
 MAPPED_COLLECTION_NAME="${DATAFED_GCS_ROOT_NAME} Collection Mapped"
 PATH_TO_GUEST_ROOT="${DATAFED_GCS_COLLECTION_ROOT_PATH}"
@@ -119,32 +119,32 @@ if [ "$local_GENERATE_REPO_FORM_SCRIPT" = "TRUE" ]
 then
   OUTPUT_SCRIPT_NAME="${DATAFED_REPO_ID_AND_DIR}-repo-form.sh"
   echo "Creating ${OUTPUT_SCRIPT_NAME} file"
-  echo "export DATAFED_REPO_ID=\"$DATAFED_REPO_ID_AND_DIR\"" > ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_TITLE=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_DESCRIPTION=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_SERVER_ADDRESS=\"tcp://$repo_domain_name:$local_DATAFED_REPO_EGRESS_PORT\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_PUBLIC_KEY=\"$public_key\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_ENDPOINT_UUID=\"$uuid_of_collection\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_RELATIVE_PATH=\"${PATH_TO_GUEST_ROOT}/$DATAFED_REPO_ID_AND_DIR\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_DOMAIN=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_EXPORT_PATH=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "export DATAFED_REPO_CAPACITY=\"\"" >> ${OUTPUT_SCRIPT_NAME}
+  echo "export DATAFED_REPO_ID=\"$DATAFED_REPO_ID_AND_DIR\"" > "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_TITLE=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_DESCRIPTION=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_SERVER_ADDRESS=\"tcp://$repo_domain_name:$local_DATAFED_REPO_EGRESS_PORT\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_PUBLIC_KEY=\"$public_key\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_ENDPOINT_UUID=\"$uuid_of_collection\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_RELATIVE_PATH=\"${PATH_TO_GUEST_ROOT}/$DATAFED_REPO_ID_AND_DIR\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_DOMAIN=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_EXPORT_PATH=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "export DATAFED_REPO_CAPACITY=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
 fi
 
 if [ "$local_GENERATE_REPO_FORM_CONFIG" = "TRUE" ]
 then
   OUTPUT_SCRIPT_NAME="${DATAFED_REPO_ID_AND_DIR}-repo-form.cfg"
   echo "Creating ${OUTPUT_SCRIPT_NAME} file"
-  echo "id=\"$DATAFED_REPO_ID_AND_DIR\"" > ${OUTPUT_SCRIPT_NAME}
-  echo "title=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "desc=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "address=\"tcp://$repo_domain_name:$local_DATAFED_REPO_EGRESS_PORT\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "pub_key=\"$public_key\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "endpoint=\"$uuid_of_collection\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "path=\"${PATH_TO_GUEST_ROOT}/$DATAFED_REPO_ID_AND_DIR\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "domain=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "exp_path=\"\"" >> ${OUTPUT_SCRIPT_NAME}
-  echo "capacity=\"\"" >> ${OUTPUT_SCRIPT_NAME}
+  echo "id=\"$DATAFED_REPO_ID_AND_DIR\"" > "${OUTPUT_SCRIPT_NAME}"
+  echo "title=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "desc=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "address=\"tcp://$repo_domain_name:$local_DATAFED_REPO_EGRESS_PORT\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "pub_key=\"$public_key\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "endpoint=\"$uuid_of_collection\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "path=\"${PATH_TO_GUEST_ROOT}/$DATAFED_REPO_ID_AND_DIR\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "domain=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "exp_path=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "capacity=\"\"" >> "${OUTPUT_SCRIPT_NAME}"
 fi
 
 if [ "$local_GENERATE_REPO_FORM_JSON" = "TRUE" ]
@@ -153,18 +153,18 @@ then
   OUTPUT_SCRIPT_NAME="${DATAFED_REPO_ID_AND_DIR}-repo-form.json"
   echo "Creating ${OUTPUT_SCRIPT_NAME} script"
   echo "{" > ${OUTPUT_SCRIPT_NAME}
-  echo "  \"id\": \"$DATAFED_REPO_ID_AND_DIR\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"title\": \"\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"desc\": \"\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"address\": \"tcp://$repo_domain_name:$local_DATAFED_REPO_EGRESS_PORT\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"pub_key\": \"$public_key\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"endpoint\": \"$uuid_of_collection\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"path\": \"${PATH_TO_GUEST_ROOT}/$DATAFED_REPO_ID_AND_DIR\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"domain\": \"\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"exp_path\": \"\"," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"capacity\": 0," >> ${OUTPUT_SCRIPT_NAME}
-  echo "  \"admins\": [\"\"]" >> ${OUTPUT_SCRIPT_NAME}
-  echo "}" >> ${OUTPUT_SCRIPT_NAME}
+  echo "  \"id\": \"$DATAFED_REPO_ID_AND_DIR\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"title\": \"\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"desc\": \"\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"address\": \"tcp://$repo_domain_name:$local_DATAFED_REPO_EGRESS_PORT\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"pub_key\": \"$public_key\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"endpoint\": \"$uuid_of_collection\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"path\": \"${PATH_TO_GUEST_ROOT}/$DATAFED_REPO_ID_AND_DIR\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"domain\": \"\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"exp_path\": \"\"," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"capacity\": 0," >> "${OUTPUT_SCRIPT_NAME}"
+  echo "  \"admins\": [\"\"]" >> "${OUTPUT_SCRIPT_NAME}"
+  echo "}" >> "${OUTPUT_SCRIPT_NAME}"
 fi
 
 echo "DataFed Repo Form Registration Contents"
