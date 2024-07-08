@@ -1,4 +1,4 @@
-// Local private includes
+//Local private includes
 #include "ZeroMQCommunicator.hpp"
 #include "../Frame.hpp"
 #include "../ProtoBufFactory.hpp"

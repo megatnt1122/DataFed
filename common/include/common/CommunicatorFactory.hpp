@@ -15,6 +15,7 @@ namespace SDMS {
 
 class CommunicatorFactory {
 private:
+  //Initializes the m_log_context:
   LogContext m_log_context;
 
 public:

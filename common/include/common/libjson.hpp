@@ -2,7 +2,7 @@
 #define LIBJSON_HPP
 
 #include "TraceException.hpp"
-#include "fpconv.h"
+#include "fpconv.hpp"
 #include <cstdlib>
 #include <map>
 #include <math.h>

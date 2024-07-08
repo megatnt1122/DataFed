@@ -1,5 +1,5 @@
 // Local public includes
-#include "common/fpconv.h"
+#include "common/fpconv.hpp"
 #include "common/powers.h"
 
 // Standard includes
