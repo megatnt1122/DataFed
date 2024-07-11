@@ -2,7 +2,6 @@
 
 #define BOOST_TEST_MODULE communication_factory
 #include <boost/test/unit_test.hpp>
-
 // Local public includes
 #include "common/CommunicatorFactory.hpp"
 #include "common/CredentialFactory.hpp"
@@ -529,5 +528,56 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply) {
   // Client receive
   /************************CLIENT END****************/
 }
+
+/* COMMENTED OUT TO ENABLE PROPER TESTING HTTPCredentials
+//Starter Tests for HTTPCommunicator
+BOOST_AUTO_TEST_CASE(test_send){
+  //Create a request message
+  std::string request_message = "Hello, world!";
+
+  //Send the request message
+  HTTPCommunicator communicator;
+  communicator.send(request_message);
+
+  //Verify that the request message was sent successfully
+  BOOST_CHECK(communicator.last_sent_message().compare(request_message) ==0);
+}
+
+BOOST_AUTO_TEST_CASE(test_receive) {
+    // Create a response message
+    std::string response_message = "Hello, back!";
+    
+    // Simulate receiving a response message
+    HTTPCommunicator communicator;
+    communicator.receive(response_message);
+    
+    // Verify that the received response message matches the expected message
+    BOOST_CHECK(communicator.last_received_message().compare(response_message) == 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_poll) {
+    // Create a response message
+    std::string response_message = "Hello, back!";
+    
+    // Simulate receiving a response message
+    HTTPCommunicator communicator;
+    communicator.poll(response_message);
+    
+    // Verify that the received response message matches the expected message
+    BOOST_CHECK(communicator.last_received_message().compare(response_message) == 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_id) {
+    // Verify that the id() method returns the expected value
+    HTTPCommunicator communicator;
+    BOOST_CHECK(communicator.id().compare("hello") == 0);
+}
+
+BOOST_AUTO_TEST_CASE(test_address) {
+    // Verify that the address() method returns the expected value
+    HTTPCommunicator communicator;
+    BOOST_CHECK(communicator.address().compare("hello") == 0);
+}
+*/
 
 BOOST_AUTO_TEST_SUITE_END()
