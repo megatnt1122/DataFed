@@ -4,18 +4,43 @@
 
 //Fix the includes and 
 #include "common/ICommunicator.hpp"
+#include "common/IMessage.hpp"
+#include "common/MessageFactory.hpp"
+#include "common/DynaLog.hpp"
 
-namespace my_examples 
-{
+//Standard includes
+#include <memory>
+#include <string>
+
+namespace SDMS{
 //This talks to the
-  class Http : public ICommunicator 
-      public:
-      const COMMUNICATOR_TYPE getType() const override;
-      {
-   //I think we need to have the send and recieve functions, I am confused on how I should go about reconfiguring send and recieve if so?
-   //I understand that I need to throw the big GlobusAPI functions within the send and recieve,
-  //
-  //response Type and funcs are in Icomm header
-  };
+class HTTPCommunicator : public ICommunicator
+{
+protected:
+  LogContext m_log_context;
+
+public:
+  
+  explicit HTTPCommunicator(const LogContext &log_context) : m_log_context(log_context){};
+
+  virtual Response poll(const MessageType) final;
+
+  /**
+      * This is technical debt in the future get rid of MsgBuf and replace with
+      * IMessage
+      **/
+  virtual void send(IMessage &message) final;
+
+  /* Ideally in the future get rid of MsgBuf and replace with IMessage
+      **/
+  virtual Response receive(const MessageType) final;
+
+  virtual const std::string id() const noexcept final;
+  virtual const std::string address() const noexcept final;
+
+  virtual ~HTTPCommunicator(){};
+
+};
+
 }
 #endif // HTTP_HP
