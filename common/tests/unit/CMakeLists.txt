@@ -2,6 +2,7 @@
 foreach(PROG
     test_Buffer
     test_CommunicatorFactory
+    test_CredentialFactory
     test_Frame
     test_DynaLog
     test_Value

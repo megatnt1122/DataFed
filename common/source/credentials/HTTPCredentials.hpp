@@ -1,6 +1,5 @@
 #ifndef HTTP_CREDENTIALS_HPP
 #define HTTP_CREDENTIALS_HPP
-#pragma once
  
 //Local includes
 #include "common/ICredentials.hpp"

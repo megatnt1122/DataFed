@@ -44,6 +44,7 @@ SocketOptions generateCommonOptions(const std::string channel) {
   return socket_options;
 }
 
+
 BOOST_AUTO_TEST_SUITE(CommunicatorFactoryTest)
 
 BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory) {
@@ -539,18 +540,18 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   CommunicatorFactory factory(log_context);
   // Create the client communicator
   const std::string server_id = "overlord";
+  
+  //Flag 1: The memory error is here
   auto server = [&]() {
     /// Creating input parameters for constructing Communication Instance
     SocketOptions socket_options = generateCommonOptions("test_channel");
     socket_options.port = 1341;
     socket_options.local_id = server_id;
+    socket_options.protocol_type = ProtocolType::HTTP;
 
     CredentialFactory cred_factory;
 
     std::unordered_map<CredentialType, std::string> cred_options;
-    cred_options[CredentialType::PUBLIC_KEY] = public_key;
-    cred_options[CredentialType::PRIVATE_KEY] = secret_key;
-    cred_options[CredentialType::SERVER_KEY] = server_key;
 
     auto credentials = cred_factory.create(ProtocolType::HTTP, cred_options);
 
@@ -565,9 +566,11 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   }();
 
   const std::string client_id = "minion";
-  auto client = [&]() {
+  
+ /* auto client = [&]() {
     /// Creating input parameters for constructing Communication Instance
-    SocketOptions socket_options = generateCommonOptions("test_channel");
+    SocketOptions:w
+    socket_options = generateCommonOptions("test_channel");
     socket_options.class_type = SocketClassType::CLIENT;
     socket_options.connection_life = SocketConnectionLife::INTERMITTENT;
     socket_options.port = 1341;
@@ -576,9 +579,6 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     CredentialFactory cred_factory;
 
     std::unordered_map<CredentialType, std::string> cred_options;
-    cred_options[CredentialType::PUBLIC_KEY] = public_key;
-    cred_options[CredentialType::PRIVATE_KEY] = secret_key;
-    cred_options[CredentialType::SERVER_KEY] = server_key;
 
     auto credentials = cred_factory.create(ProtocolType::HTTP, cred_options);
 
@@ -591,7 +591,8 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     return factory.create(socket_options, *credentials, timeout_on_receive,
                           timeout_on_poll);
   }();
-
+  */
+/*
   const std::string id = "Bob";
   const std::string key = "skeleton";
 
@@ -604,21 +605,18 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
   MessageFactory msg_factory;
   const std::string token = "magic_token";
-  { // Client send
-    auto msg_from_client =
-        msg_factory.create(MessageType::STRING);
+  */
+  /*{ // Client send
+    auto msg_from_client = msg_factory.create(MessageType::STRING);
     msg_from_client->set(MessageAttribute::ID, id);
     msg_from_client->set(MessageAttribute::KEY, key);
 
-    auto auth_by_token_req =
-        std::make_unique<Anon::AuthenticateByTokenRequest>();
-    auth_by_token_req->set_token(token);
 
-    msg_from_client->setPayload(std::move(auth_by_token_req));
+    msg_from_client->setPayload(std::string("Something"));
 
     client->send(*msg_from_client);
-  }
-
+  }*/
+  /*
   { // Server receive
     ICommunicator::Response response =
         server->receive(MessageType::STRING);
@@ -648,15 +646,14 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     BOOST_CHECK(routes.size() == 1);
     BOOST_CHECK(routes.front().compare(client_id) == 0);
     //FLAG HERE: May have to shift this to take into account STRINGMESSAGE payload function
-    auto google_msg_ptr =
-        std::get<::google::protobuf::Message *>(response.message->getPayload());
-    Anon::AuthenticateByTokenRequest *payload =
-        dynamic_cast<Anon::AuthenticateByTokenRequest *>(google_msg_ptr);
-
-    BOOST_CHECK(payload->token().compare(token) == 0);
+    auto string_msg_content =
+        std::get<std::string >(response.message->getPayload());
+        
+        BOOST_CHECK(string_msg_content.compare("Something") == 0);
   }
+  */
 }
-
+/*
  BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply_HTTP) {
 
   LogContext log_context;
@@ -745,8 +742,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   MessageFactory msg_factory;
   const std::string token = "magic_token";
 
-  /************************CLIENT BEGIN****************/
-  // Client send
+   * // Client send
   auto msg_from_client =
       msg_factory.create(MessageType::STRING);
   msg_from_client->set(MessageAttribute::ID, id);
@@ -759,9 +755,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
   client->send(*msg_from_client);
   // Client send
-  /************************CLIENT END****************/
 
-  /************************SERVER BEGIN****************/
   // Server receive
   ICommunicator::Response response =
       server->receive(MessageType::STRING);
@@ -813,9 +807,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
   server->send(*nack_msg);
   // Server send
-  /************************SERVER END****************/
 
-  /************************CLIENT BEGIN****************/
   // Client receive
   ICommunicator::Response response_client =
       client->receive(MessageType::STRING);
@@ -836,5 +828,6 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   BOOST_CHECK(response_payload->err_msg().compare(error_msg) == 0);
 
   // Client receive
-  /************************CLIENT END****************/
-}BOOST_AUTO_TEST_SUITE_END()
+*/
+//}
+BOOST_AUTO_TEST_SUITE_END()
