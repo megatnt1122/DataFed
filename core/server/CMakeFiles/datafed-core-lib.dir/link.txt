@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdatafed-core-lib.a CMakeFiles/datafed-core-lib.dir/AuthMap.cpp.o CMakeFiles/datafed-core-lib.dir/AuthenticationManager.cpp.o CMakeFiles/datafed-core-lib.dir/ClientWorker.cpp.o CMakeFiles/datafed-core-lib.dir/Condition.cpp.o CMakeFiles/datafed-core-lib.dir/Config.cpp.o CMakeFiles/datafed-core-lib.dir/CoreServer.cpp.o CMakeFiles/datafed-core-lib.dir/DatabaseAPI.cpp.o CMakeFiles/datafed-core-lib.dir/GlobusAPI.cpp.o CMakeFiles/datafed-core-lib.dir/TaskMgr.cpp.o CMakeFiles/datafed-core-lib.dir/TaskWorker.cpp.o
+/usr/bin/ranlib libdatafed-core-lib.a

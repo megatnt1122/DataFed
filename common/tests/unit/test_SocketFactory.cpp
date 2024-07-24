@@ -181,4 +181,128 @@ BOOST_AUTO_TEST_CASE(testing_SocketFactory_NoCredentials) {
   BOOST_CHECK(socket->hasCredentials() == false);
 }
 
+////////////////////////////////////////
+///       START OF HTTP TESTING     ///
+//////////////////////////////////////
+BOOST_AUTO_TEST_CASE(testing_HTTPSocketFactoryThrow) {
+
+  SocketOptions socket_options;
+  socket_options.scheme = URIScheme::HTTP;
+  socket_options.class_type = SocketClassType::CLIENT;
+  socket_options.direction_type = SocketDirectionalityType::BIDIRECTIONAL;
+  socket_options.communication_type = SocketCommunicationType::ASYNCHRONOUS;
+  socket_options.protocol_type = ProtocolType::HTTP;
+  socket_options.host = "localhost";
+  socket_options.port = 8080;
+
+  DummyCredential credentials(public_key);
+  SocketFactory factory;
+
+  // Should throw because non zmq credential type was used.
+  BOOST_CHECK_THROW(factory.create(socket_options, credentials),
+                    std::exception);
+}
+
+BOOST_AUTO_TEST_CASE(testing_HTTPSocketFactory) {
+
+  SocketOptions socket_options;
+  socket_options.scheme = URIScheme::HTTP;
+  socket_options.class_type = SocketClassType::CLIENT;
+  socket_options.connection_life = SocketConnectionLife::INTERMITTENT;
+  socket_options.direction_type = SocketDirectionalityType::BIDIRECTIONAL;
+  socket_options.communication_type = SocketCommunicationType::ASYNCHRONOUS;
+  socket_options.protocol_type = ProtocolType::HTTP;
+  socket_options.host = "localhost";
+  socket_options.port = 8080;
+
+  std::unordered_map<CredentialType, std::string> cred_options;
+  cred_options[CredentialType::PUBLIC_KEY] = public_key;
+  cred_options[CredentialType::PRIVATE_KEY] = secret_key;
+  cred_options[CredentialType::SERVER_KEY] = server_key;
+
+  CredentialFactory cred_factory;
+  auto credentials = cred_factory.create(ProtocolType::HTTP, cred_options);
+
+  SocketFactory factory;
+  std::unique_ptr<ISocket> socket =
+      factory.create(socket_options, *credentials);
+
+  BOOST_CHECK(socket->getAddress() == "http://" + socket_options.host + ":" + std::to_string(*socket_options.port));
+  BOOST_CHECK(socket->getSocketClassType() == SocketClassType::CLIENT);
+  BOOST_CHECK(socket->getSocketDirectionalityType() == SocketDirectionalityType::BIDIRECTIONAL);
+  BOOST_CHECK(socket->getSocketCommunicationType() == SocketCommunicationType::ASYNCHRONOUS);
+  BOOST_CHECK(socket->getProtocolType() == ProtocolType::HTTP);
+
+  std::string cred_pub = socket->get(CredentialType::PUBLIC_KEY);
+  std::string cred_priv = socket->get(CredentialType::PRIVATE_KEY);
+  std::string cred_serv = socket->get(CredentialType::SERVER_KEY);
+
+  BOOST_CHECK(cred_pub == public_key);
+  BOOST_CHECK(cred_priv == secret_key);
+  BOOST_CHECK(cred_serv == server_key);
+}
+
+BOOST_AUTO_TEST_CASE(testing_HTTPSocketFactory_NoServerKey) {
+
+  SocketOptions socket_options;
+  socket_options.scheme = URIScheme::HTTP;
+  socket_options.class_type = SocketClassType::CLIENT;
+  socket_options.connection_life = SocketConnectionLife::INTERMITTENT;
+  socket_options.direction_type = SocketDirectionalityType::BIDIRECTIONAL;
+  socket_options.communication_type = SocketCommunicationType::ASYNCHRONOUS;
+  socket_options.protocol_type = ProtocolType::HTTP;
+  socket_options.host = "localhost";
+  socket_options.port = 8080;
+
+  CredentialFactory cred_factory;
+
+  std::unordered_map<CredentialType, std::string> cred_options;
+  cred_options[CredentialType::PUBLIC_KEY] = public_key;
+  cred_options[CredentialType::PRIVATE_KEY] = secret_key;
+
+  auto credentials = cred_factory.create(ProtocolType::HTTP, cred_options);
+
+  SocketFactory factory;
+  std::unique_ptr<ISocket> socket =
+      factory.create(socket_options, *credentials);
+
+  BOOST_CHECK(socket->getAddress() == "http://" + socket_options.host + ":" + std::to_string(*socket_options.port));
+  BOOST_CHECK(socket->getSocketClassType() == SocketClassType::CLIENT);
+  BOOST_CHECK(socket->getSocketDirectionalityType() == SocketDirectionalityType::BIDIRECTIONAL);
+  BOOST_CHECK(socket->getSocketCommunicationType() == SocketCommunicationType::ASYNCHRONOUS);
+  BOOST_CHECK(socket->getProtocolType() == ProtocolType::HTTP);
+
+  std::string cred_pub = socket->get(CredentialType::PUBLIC_KEY);
+  std::string cred_priv = socket->get(CredentialType::PRIVATE_KEY);
+  BOOST_CHECK_THROW(std::string cred_serv =
+                        socket->get(CredentialType::SERVER_KEY),
+                    TraceException);
+
+  BOOST_CHECK(cred_pub.compare(public_key) == 0);
+  BOOST_CHECK(cred_priv.compare(secret_key) == 0);
+}
+
+BOOST_AUTO_TEST_CASE(testing_HTTPSocketFactory_NoCredentials) {
+
+  SocketOptions socket_options;
+  socket_options.scheme = URIScheme::HTTP;
+  socket_options.class_type = SocketClassType::CLIENT;
+  socket_options.connection_life = SocketConnectionLife::INTERMITTENT;
+  socket_options.direction_type = SocketDirectionalityType::BIDIRECTIONAL;
+  socket_options.communication_type = SocketCommunicationType::ASYNCHRONOUS;
+  socket_options.protocol_type = ProtocolType::HTTP;
+  socket_options.host = "localhost";
+  socket_options.port = 8080;
+
+  CredentialFactory cred_factory;
+
+  std::unordered_map<CredentialType, std::string> cred_options;
+  auto credentials = cred_factory.create(ProtocolType::HTTP, cred_options);
+
+  SocketFactory factory;
+  std::unique_ptr<ISocket> socket =
+      factory.create(socket_options, *credentials);
+  BOOST_CHECK(socket->hasCredentials() == false);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

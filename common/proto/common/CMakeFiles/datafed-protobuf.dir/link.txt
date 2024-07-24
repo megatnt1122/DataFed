@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdatafed-protobuf.a CMakeFiles/datafed-protobuf.dir/SDMS.pb.cc.o CMakeFiles/datafed-protobuf.dir/SDMS_Anon.pb.cc.o CMakeFiles/datafed-protobuf.dir/SDMS_Auth.pb.cc.o CMakeFiles/datafed-protobuf.dir/Version.pb.cc.o
+/usr/bin/ranlib libdatafed-protobuf.a

@@ -7,6 +7,7 @@
 #include "common/IMessage.hpp"
 #include "common/MessageFactory.hpp"
 #include "common/DynaLog.hpp"
+#include "common/ISocket.hpp"
 
 //Standard includes
 #include <memory>
@@ -17,13 +18,24 @@ namespace SDMS{
 class HTTPCommunicator : public ICommunicator
 {
 protected:
+  std::unique_ptr<ISocket> m_socket;
   LogContext m_log_context;
-
+  uint32_t m_timeout_on_receive_milliseconds = 0;
+  long m_timeout_on_poll_milliseconds = 10;
+  MessageFactory m_msg_factory;
+  ICommunicator::Response m_poll(uint32_t timeout_milliseconds);
+  //add list obj here
 public:
   
   explicit HTTPCommunicator(const LogContext &log_context) : m_log_context(log_context){};
 
-  virtual Response poll(const MessageType) final;
+  //Created contructor for HTTPCommunicator
+  HTTPCommunicator(const SocketOptions &socket_options,
+                   const ICredentials &credentials,
+                   uint32_t timeout_on_receive_milliseconds,
+                   long timeout_on_poll_milliseconds,
+                   const LogContext &log_context);
+  virtual ICommunicator::Response poll(const MessageType) final;
 
   /**
       * This is technical debt in the future get rid of MsgBuf and replace with
@@ -33,7 +45,7 @@ public:
 
   /* Ideally in the future get rid of MsgBuf and replace with IMessage
       **/
-  virtual Response receive(const MessageType) final;
+  virtual ICommunicator::Response receive(const MessageType) final;
 
   virtual const std::string id() const noexcept final;
   virtual const std::string address() const noexcept final;

@@ -529,7 +529,9 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply) {
   // Client receive
   /************************CLIENT END****************/
 }
-
+////////////////////////////////////////
+///       START OF HTTP TESTING     ///
+//////////////////////////////////////
 BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
   std::cout << "\n*****************************" << std::endl;
@@ -542,10 +544,11 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   const std::string server_id = "overlord";
   
   //Flag 1: The memory error is here
+  /*
   auto server = [&]() {
     /// Creating input parameters for constructing Communication Instance
     SocketOptions socket_options = generateCommonOptions("test_channel");
-    socket_options.port = 1341;
+    socket_options.port = 8080;
     socket_options.local_id = server_id;
     socket_options.protocol_type = ProtocolType::HTTP;
 
@@ -563,17 +566,19 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     // socket we will actually be communicating with a client.
     return factory.create(socket_options, *credentials, timeout_on_receive,
                           timeout_on_poll);
-  }();
+  }(); 
+  */
 
   const std::string client_id = "minion";
   
- /* auto client = [&]() {
+  auto client = [&]() {
     /// Creating input parameters for constructing Communication Instance
-    SocketOptions:w
-    socket_options = generateCommonOptions("test_channel");
+    SocketOptions socket_options = generateCommonOptions("localhost");
+    socket_options = generateCommonOptions("localhost");
     socket_options.class_type = SocketClassType::CLIENT;
     socket_options.connection_life = SocketConnectionLife::INTERMITTENT;
-    socket_options.port = 1341;
+    socket_options.port = 8080;
+    socket_options.protocol_type = ProtocolType::HTTP;
     socket_options.local_id = client_id;
 
     CredentialFactory cred_factory;
@@ -591,22 +596,19 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     return factory.create(socket_options, *credentials, timeout_on_receive,
                           timeout_on_poll);
   }();
-  */
-/*
+  
+
   const std::string id = "Bob";
   const std::string key = "skeleton";
-
+ //FLAG THIS IS CAUSING A MEMORY ISSUE
   auto client_id_from_comm = client->id();
-  auto server_id_from_comm = server->id();
   std::cout << "Client id of communicator " << client_id_from_comm << std::endl;
-  std::cout << "Server id of communicator " << server_id_from_comm << std::endl;
+  
   BOOST_CHECK(client_id_from_comm.compare(client_id) == 0);
-  BOOST_CHECK(server_id_from_comm.compare(server_id) == 0);
-
+  
   MessageFactory msg_factory;
   const std::string token = "magic_token";
-  */
-  /*{ // Client send
+  { // Client send
     auto msg_from_client = msg_factory.create(MessageType::STRING);
     msg_from_client->set(MessageAttribute::ID, id);
     msg_from_client->set(MessageAttribute::KEY, key);
@@ -615,11 +617,11 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     msg_from_client->setPayload(std::string("Something"));
 
     client->send(*msg_from_client);
-  }*/
-  /*
-  { // Server receive
+  }
+  
+  { // Client receive
     ICommunicator::Response response =
-        server->receive(MessageType::STRING);
+        client->receive(MessageType::STRING);
     BOOST_CHECK(response.time_out == false);
     BOOST_CHECK(response.error == false);
 
@@ -638,21 +640,15 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
         std::get<std::string>(response.message->get(MessageAttribute::ID))
             .compare(id) == 0);
 
-    const auto &routes = response.message->getRoutes();
-    std::cout << "Routes are " << std::endl;
-    for (const auto &route : routes) {
-      std::cout << route << std::endl;
-    }
-    BOOST_CHECK(routes.size() == 1);
-    BOOST_CHECK(routes.front().compare(client_id) == 0);
+
     //FLAG HERE: May have to shift this to take into account STRINGMESSAGE payload function
     auto string_msg_content =
         std::get<std::string >(response.message->getPayload());
         
         BOOST_CHECK(string_msg_content.compare("Something") == 0);
   }
-  */
 }
+BOOST_AUTO_TEST_SUITE_END()
 /*
  BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply_HTTP) {
 
@@ -830,4 +826,4 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   // Client receive
 */
 //}
-BOOST_AUTO_TEST_SUITE_END()
+//BOOST_AUTO_TEST_SUITE_END()

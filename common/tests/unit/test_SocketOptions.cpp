@@ -53,5 +53,17 @@ BOOST_AUTO_TEST_CASE(testing_AddressSplitterNoPort2) {
     BOOST_CHECK(false);
   }
 }
+////////////////////////////////////////
+///       START OF HTTP TESTING     ///
+//////////////////////////////////////
+BOOST_AUTO_TEST_CASE(testing_AddressSplitterHTTP) {
+
+  AddressSplitter splitter("http://localhost:8080");
+
+  BOOST_CHECK(splitter.host().compare("localhost") == 0);
+  BOOST_CHECK(splitter.port() == 8080);
+  BOOST_CHECK(splitter.scheme() == URIScheme::HTTP);
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()

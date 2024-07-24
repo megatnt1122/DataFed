@@ -1,0 +1,2 @@
+/usr/bin/ar qc libprotobuf-target.a CMakeFiles/protobuf-target.dir/SDMS.pb.cc.o CMakeFiles/protobuf-target.dir/SDMS_Anon.pb.cc.o CMakeFiles/protobuf-target.dir/SDMS_Auth.pb.cc.o CMakeFiles/protobuf-target.dir/Version.pb.cc.o
+/usr/bin/ranlib libprotobuf-target.a
