@@ -13,6 +13,8 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <curl/curl.h>
+#include <list> // Include list header
 
 namespace SDMS{
 
@@ -52,32 +54,34 @@ namespace SDMS{
   ICommunicator::Response 
   HTTPCommunicator::poll(const MessageType message_type){
     //Put send and recieve here and make sure response = response
-    Response response = 
+    // Step 1: Create and send message
+    std::unique_ptr<IMessage> message = m_msg_factory.create(message_type);
+    send(*message);
+
+    // Step 2: Receive response
+    ICommunicator::Response response = receive(message_type);
+
+    // Step 3: Process response
     LogContext log_context = m_log_context;
-    if (response.error == false and response.time_out == false) {
-      response.message = m_msg_factory.create(message_type); 
-      log_context.correlation_id = std::get<std::string>(response.message->get(MessageAttribute::CORRELATION_ID));
-      std::string err_message = "Received message on communicator id: " + id();
-      err_message += ", receiving from address: " + address();
+    if (!response.error && !response.time_out) {
+        log_context.correlation_id = std::get<std::string>(message->get(MessageAttribute::CORRELATION_ID));
+        std::string log_message = "Received message on communicator id: " + id();
+        log_message += ", receiving from address: " + address();
+        DL_TRACE(log_context, log_message);
     } else {
         if (response.error) {
-          std::string err_message =
-              "Error encountered for communicator id: " + id();
-          err_message +=
-              ", error is: " + response.error_msg;
-          err_message +=
-              ", receiving from address: " + address();
-          DL_ERROR(log_context, err_message);
+            std::string error_message = "Error encountered for communicator id: " + id();
+            error_message += ", error is: " + response.error_msg;
+            error_message += ", receiving from address: " + address();
+            DL_ERROR(log_context, error_message);
         } else if (response.time_out) {
-            std::string err_message =
-                "Timeout encountered for communicator id: " + id();
-            err_message +=
-                ", timeout occurred after: " + m_timeout_on_poll_milliseconds;
-            err_message += 
-                ", receiving from address: " + address();
-            DL_TRACE(log_context, err_message);
+            std::string error_message = "Timeout encountered for communicator id: " + id();
+            error_message += ", timeout occurred after: " + std::to_string(m_timeout_on_poll_milliseconds);
+            error_message += ", receiving from address: " + address();
+            DL_TRACE(log_context, error_message);
         }
-  }
+    }
+
     return response;
   }
 
@@ -88,6 +92,45 @@ namespace SDMS{
   void HTTPCommunicator::send(IMessage &message){
   //add curl here
   //create a std list of type IComm::Response, to be our buffer that
+    CURL *curl;
+    CURLcode res;
+
+    // Initialize CURL session
+    curl = curl_easy_init();
+    if (curl) {
+        // Set CURL options: URL, HTTP method, headers, body, etc.
+        curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080"); // Set URL with localhost and port
+        curl_easy_setopt(curl, CURLOPT_PORT, 8080L); // Set port explicitly
+
+        // Example: Set headers if needed
+        struct curl_slist *headers = NULL;
+        headers = curl_slist_append(headers, "Content-Type: application/json");
+        curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
+
+        // Example: Set POST data if needed
+        curl_easy_setopt(curl, CURLOPT_POST, 1L);
+        const auto& payloadVariant = message.getPayload();
+        if (std::holds_alternative<std::string>(payloadVariant)) {
+            std::string payload = std::get<std::string>(payloadVariant);
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
+        }        
+        // Perform the request
+        res = curl_easy_perform(curl);
+
+        // Check for errors
+        if (res != CURLE_OK) {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n",
+                    curl_easy_strerror(res));
+        }
+
+        // Cleanup
+        curl_slist_free_all(headers); // Free headers list
+        curl_easy_cleanup(curl);
+
+        // Store response in buffer
+        ICommunicator::Response response;
+       responseBuffer.push_back(std::move(response)); // Assuming `response` is movable
+    }
   }
 
   /* Ideally in the future get rid of MsgBuf and replace with IMessage
@@ -95,14 +138,23 @@ namespace SDMS{
   ICommunicator::Response
   HTTPCommunicator::receive(const MessageType){
   //FIFO from send's (imaginary) buffer
-    return ICommunicator::Response();
+    ICommunicator::Response response;
+
+    if (!responseBuffer.empty()) {
+        response = std::move(responseBuffer.front()); // Use move semantics if possible
+        responseBuffer.pop_front(); // Remove response from buffer
+    } else {
+        // Handle case when buffer is empty
+    }
+
+    return response;
   }
 
   const std::string HTTPCommunicator::id() const noexcept{
-    return std::string("hello");
+    return std::string("ClientID");
   }
   
   const std::string HTTPCommunicator::address() const noexcept{
-    return std::string("hello");
+    return std::string("ClientAddress");
   }
 }

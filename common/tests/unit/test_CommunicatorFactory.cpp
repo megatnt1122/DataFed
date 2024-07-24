@@ -535,7 +535,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply) {
 BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
   std::cout << "\n*****************************" << std::endl;
-  std::cout << "Starting insecure test" << std::endl;
+  std::cout << "Starting HTTP insecure test" << std::endl;
 
   LogContext log_context;
   log_context.thread_name = "test_communicator_factory";
@@ -543,6 +543,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   // Create the client communicator
   const std::string server_id = "overlord";
   
+  std::cout << "FLAG 1" << std::endl;
   //Flag 1: The memory error is here
   /*
   auto server = [&]() {
@@ -569,12 +570,15 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   }(); 
   */
 
-  const std::string client_id = "minion";
+  const std::string client_id = "ClientID";
   
+  std::cout << "FLAG 2" << std::endl;
   auto client = [&]() {
     /// Creating input parameters for constructing Communication Instance
+    ///
+    /// OVERWRITE THE OPTIONS AS DEFAULT IS MADE FOR ZMQ
     SocketOptions socket_options = generateCommonOptions("localhost");
-    socket_options = generateCommonOptions("localhost");
+    socket_options.scheme = URIScheme::HTTP;
     socket_options.class_type = SocketClassType::CLIENT;
     socket_options.connection_life = SocketConnectionLife::INTERMITTENT;
     socket_options.port = 8080;
@@ -598,14 +602,17 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   }();
   
 
+  std::cout << "FLAG 3" << std::endl;
   const std::string id = "Bob";
   const std::string key = "skeleton";
  //FLAG THIS IS CAUSING A MEMORY ISSUE
   auto client_id_from_comm = client->id();
-  std::cout << "Client id of communicator " << client_id_from_comm << std::endl;
-  
+  std::cout << "Client id of http communicator " << client_id_from_comm << std::endl;
+  std::cout << client_id_from_comm << std::endl;
+  std::cout << client_id << std::endl;
   BOOST_CHECK(client_id_from_comm.compare(client_id) == 0);
   
+  std::cout << "FLAG 4" << std::endl;
   MessageFactory msg_factory;
   const std::string token = "magic_token";
   { // Client send
@@ -619,16 +626,22 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     client->send(*msg_from_client);
   }
   
-  { // Client receive
-    ICommunicator::Response response =
-        client->receive(MessageType::STRING);
+  std::cout << "FLAG 5" << std::endl;
+  { // Client receive --FLAG CODE IS BREAKING HERE MEM ACCESS VIOLATION
+    ICommunicator::Response response = 
+    client->receive(MessageType::STRING);
     BOOST_CHECK(response.time_out == false);
     BOOST_CHECK(response.error == false);
 
-    std::cout << "Key is "
+    std::cout << "FLAG 5.1" << std::endl;
+    //std::cout << response.message << std::endl;
+    //ERROR IN GETTING KEY and ID CURRENTLY so there must be something wrong with response.message->get(MessageAttribute::INSERTHERE) or with how it is implemeted ie std::get
+    /*std::cout << "Key is "
               << std::get<std::string>(
                      response.message->get(MessageAttribute::KEY))
               << std::endl;
+              */
+    std::cout << "FLAG 5.2" << std::endl;
     std::cout << "ID is "
               << std::get<std::string>(
                      response.message->get(MessageAttribute::ID))
@@ -636,6 +649,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     BOOST_CHECK(
         std::get<std::string>(response.message->get(MessageAttribute::KEY))
             .compare(key) == 0);
+    std::cout << "FLAG 5.3" << std::endl;
     BOOST_CHECK(
         std::get<std::string>(response.message->get(MessageAttribute::ID))
             .compare(id) == 0);
@@ -647,6 +661,8 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
         
         BOOST_CHECK(string_msg_content.compare("Something") == 0);
   }
+
+  std::cout << "FLAG 6" << std::endl;
 }
 BOOST_AUTO_TEST_SUITE_END()
 /*

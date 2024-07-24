@@ -12,6 +12,7 @@
 //Standard includes
 #include <memory>
 #include <string>
+#include <list> // Include list header
 
 namespace SDMS{
 //This talks to the
@@ -25,6 +26,7 @@ protected:
   MessageFactory m_msg_factory;
   ICommunicator::Response m_poll(uint32_t timeout_milliseconds);
   //add list obj here
+  std::list<ICommunicator::Response> responseBuffer; // List to store responses
 public:
   
   explicit HTTPCommunicator(const LogContext &log_context) : m_log_context(log_context){};
