@@ -103,7 +103,10 @@ namespace SDMS{
     if (curl) {
 
         //Setting string buffer
-       // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, [](char* ptr, size_t size, size_t nmemb, void* userdata) -> size_t { reinterpret_cast<std::string*>(userdata)->append(ptr, size * nmemb);
+          return size * nmemb;
+        });
         // Set CURL options: URL, HTTP method, headers, body, etc.
         curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080"); // Set URL with localhost and port
         curl_easy_setopt(curl, CURLOPT_PORT, 8080L); // Set port explicitly
@@ -137,7 +140,8 @@ namespace SDMS{
         ICommunicator::Response response;
         MessageFactory msg_factory;
         response.message = msg_factory.create(MessageType::STRING);
-        response.message->setPayload(readBuffer); //CHANGED . to ->
+        //FLAG HERE: Causes massive error involving google::protobuf::message 
+        //response.message->setPayload(readBuffer); //CHANGED . to ->
         auto correlation_id_value = std::get<std::string>(message.get(MessageAttribute::CORRELATION_ID));
         response.message->set(MessageAttribute::CORRELATION_ID, correlation_id_value); //changed . to ->
         // Store response in buffer
