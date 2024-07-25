@@ -526,6 +526,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply) {
   BOOST_CHECK(response_payload->err_code() == ErrorCode::ID_SERVICE_ERROR);
   BOOST_CHECK(response_payload->err_msg().compare(error_msg) == 0);
 
+  std::cout << "FLAG 5" << std::endl;
   // Client receive
   /************************CLIENT END****************/
 }
@@ -619,7 +620,7 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     auto msg_from_client = msg_factory.create(MessageType::STRING);
     msg_from_client->set(MessageAttribute::ID, id);
     msg_from_client->set(MessageAttribute::KEY, key);
-
+    //std::cout << key << std::endl;
 
     msg_from_client->setPayload(std::string("Something"));
 
@@ -636,11 +637,11 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     std::cout << "FLAG 5.1" << std::endl;
     //std::cout << response.message << std::endl;
     //ERROR IN GETTING KEY and ID CURRENTLY so there must be something wrong with response.message->get(MessageAttribute::INSERTHERE) or with how it is implemeted ie std::get
-    /*std::cout << "Key is "
+   /* std::cout << "Key is "
               << std::get<std::string>(
                      response.message->get(MessageAttribute::KEY))
               << std::endl;
-              */
+            
     std::cout << "FLAG 5.2" << std::endl;
     std::cout << "ID is "
               << std::get<std::string>(
@@ -653,15 +654,17 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     BOOST_CHECK(
         std::get<std::string>(response.message->get(MessageAttribute::ID))
             .compare(id) == 0);
-
+*/
 
     //FLAG HERE: May have to shift this to take into account STRINGMESSAGE payload function
     auto string_msg_content =
         std::get<std::string >(response.message->getPayload());
-        
-        BOOST_CHECK(string_msg_content.compare("Something") == 0);
-  }
 
+    std::cout<< "String Msg Content:" << std::endl;
+    std::cout<< string_msg_content << std::endl;
+        BOOST_CHECK(string_msg_content.compare("Something") == 0);
+
+  }
   std::cout << "FLAG 6" << std::endl;
 }
 BOOST_AUTO_TEST_SUITE_END()

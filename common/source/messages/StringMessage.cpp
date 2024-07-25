@@ -25,12 +25,10 @@ namespace SDMS {
   }
 //checking if specific attributes exist
   bool StringMessage::exists(MessageAttribute attribute_type) const {
-    std::cout << 40 << std::endl;
     return m_attributes.count(attribute_type) != 0;
   }
   //This is required due to inheriting from IMessage.hpp having this otherwise it breaks the abstraction
   bool StringMessage::exists(const std::string &attribute_type) const{
-    std::cout << 44 << std::endl;
     return false;
 }
 
@@ -84,7 +82,6 @@ namespace SDMS {
     } else if (exists(attribute_type)) {
       return m_attributes.at(attribute_type);
     } else {
-      std::cout << 50 << std::endl;
       EXCEPT_PARAM(1, "Attempt to get unsupported attribute type from StringMessage."<< toString(attribute_type));
     }
   }
@@ -93,7 +90,6 @@ std::variant<uint8_t, uint16_t, uint32_t>StringMessage::get(const std::string &a
   if (exists(attribute_name)) {
     return m_dyn_attributes.at(attribute_name);
   } else {
-    std::cout << 53 << std::endl;
     EXCEPT_PARAM(1, "Attempt to get unsupported attribute type from StringMessage."<< attribute_name);
   }
 }

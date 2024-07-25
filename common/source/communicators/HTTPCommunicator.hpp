@@ -15,7 +15,7 @@
 #include <list> // Include list header
 
 namespace SDMS{
-//This talks to the
+//This talks to the
 class HTTPCommunicator : public ICommunicator
 {
 protected:
