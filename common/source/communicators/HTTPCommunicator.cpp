@@ -8,7 +8,9 @@
 #include "common/ISocket.hpp"
 #include "common/SocketFactory.hpp"
 #include "common/SocketOptions.hpp"
+#include "common/Util.hpp"
 
+#include "common/ProtoBufMap.hpp"
 //Standard includes
 #include <memory>
 #include <string>
@@ -93,6 +95,7 @@ namespace SDMS{
       * IMessage
       **/
   void HTTPCommunicator::send(IMessage &message){
+  std::cout << "Attempting to send" << std::endl;
   //add curl here
   //create a std list of type IComm::Response, to be our buffer that
     CURL *curl;
@@ -100,13 +103,13 @@ namespace SDMS{
     std::string readBuffer;
     // Initialize CURL session
     curl = curl_easy_init();
+  
     if (curl) {
-
+        std::cout << "Setting curl options" << std::endl;
         //Setting string buffer
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlResponseWriteCB);
+
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, [](char* ptr, size_t size, size_t nmemb, void* userdata) -> size_t { reinterpret_cast<std::string*>(userdata)->append(ptr, size * nmemb);
-          return size * nmemb;
-        });
         // Set CURL options: URL, HTTP method, headers, body, etc.
         curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080"); // Set URL with localhost and port
         curl_easy_setopt(curl, CURLOPT_PORT, 8080L); // Set port explicitly
@@ -122,7 +125,8 @@ namespace SDMS{
         if (std::holds_alternative<std::string>(payloadVariant)) {
             std::string payload = std::get<std::string>(payloadVariant);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
-        }        
+        }
+
         // Perform the request
         res = curl_easy_perform(curl);
         
@@ -132,21 +136,22 @@ namespace SDMS{
                     curl_easy_strerror(res));
         }
         
-        std::cout << "ReadBuffer:" << std::endl;
-        std::cout << readBuffer << std::endl;
+        std::cout << "ReadBuffer:" << readBuffer << std::endl;
         // Cleanup
         curl_slist_free_all(headers); // Free headers list
         curl_easy_cleanup(curl);
         ICommunicator::Response response;
         MessageFactory msg_factory;
         response.message = msg_factory.create(MessageType::STRING);
-        //FLAG HERE: Causes massive error involving google::protobuf::message 
-        //response.message->setPayload(readBuffer); //CHANGED . to ->
+        
+        response.message->setPayload(readBuffer); //CHANGED . to ->
         auto correlation_id_value = std::get<std::string>(message.get(MessageAttribute::CORRELATION_ID));
+        std::cout << "Correlation ID: "<< correlation_id_value << std::endl;
         response.message->set(MessageAttribute::CORRELATION_ID, correlation_id_value); //changed . to ->
         // Store response in buffer
         responseBuffer.push_back(std::move(response)); // Assuming `response` is movable
     }
+ 
   }
 
   /* Ideally in the future get rid of MsgBuf and replace with IMessage
@@ -162,7 +167,7 @@ namespace SDMS{
     } else {
         // Handle case when buffer is empty
     }
-
+    std::cout << "Successfully finished receiving" << std::endl;
     return response;
   }
 

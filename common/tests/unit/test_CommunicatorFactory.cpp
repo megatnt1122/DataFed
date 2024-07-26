@@ -526,7 +526,6 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactoryReply) {
   BOOST_CHECK(response_payload->err_code() == ErrorCode::ID_SERVICE_ERROR);
   BOOST_CHECK(response_payload->err_msg().compare(error_msg) == 0);
 
-  std::cout << "FLAG 5" << std::endl;
   // Client receive
   /************************CLIENT END****************/
 }
@@ -545,31 +544,6 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   const std::string server_id = "overlord";
   
   std::cout << "FLAG 1" << std::endl;
-  //Flag 1: The memory error is here
-  /*
-  auto server = [&]() {
-    /// Creating input parameters for constructing Communication Instance
-    SocketOptions socket_options = generateCommonOptions("test_channel");
-    socket_options.port = 8080;
-    socket_options.local_id = server_id;
-    socket_options.protocol_type = ProtocolType::HTTP;
-
-    CredentialFactory cred_factory;
-
-    std::unordered_map<CredentialType, std::string> cred_options;
-
-    auto credentials = cred_factory.create(ProtocolType::HTTP, cred_options);
-
-    uint32_t timeout_on_receive = 40;
-    long timeout_on_poll = 10;
-
-    // When creating a communication channel with a client application we need
-    // to locally have a server socket. So though we have specified a server
-    // socket we will actually be communicating with a client.
-    return factory.create(socket_options, *credentials, timeout_on_receive,
-                          timeout_on_poll);
-  }(); 
-  */
 
   const std::string client_id = "ClientID";
   
@@ -603,41 +577,40 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   }();
   
 
-  std::cout << "FLAG 3" << std::endl;
   const std::string id = "Bob";
   const std::string key = "skeleton";
  //FLAG THIS IS CAUSING A MEMORY ISSUE
   auto client_id_from_comm = client->id();
-  std::cout << "Client id of http communicator " << client_id_from_comm << std::endl;
-  std::cout << client_id_from_comm << std::endl;
-  std::cout << client_id << std::endl;
   BOOST_CHECK(client_id_from_comm.compare(client_id) == 0);
   
-  std::cout << "FLAG 4" << std::endl;
   MessageFactory msg_factory;
+
   const std::string token = "magic_token";
   { // Client send
     auto msg_from_client = msg_factory.create(MessageType::STRING);
     msg_from_client->set(MessageAttribute::ID, id);
     msg_from_client->set(MessageAttribute::KEY, key);
-    //std::cout << key << std::endl;
+
 
     msg_from_client->setPayload(std::string("Something"));
 
+    std::cout << "FLAG 4.05" << std::endl;
     client->send(*msg_from_client);
+    std::cout << "FLAG 4.1" << std::endl;
   }
   
   std::cout << "FLAG 5" << std::endl;
-  { // Client receive --FLAG CODE IS BREAKING HERE MEM ACCESS VIOLATION
+  { // Client receive
     ICommunicator::Response response = 
     client->receive(MessageType::STRING);
     BOOST_CHECK(response.time_out == false);
     BOOST_CHECK(response.error == false);
+    BOOST_CHECK(response.message->type()==MessageType::STRING);
 
     std::cout << "FLAG 5.1" << std::endl;
-    //std::cout << response.message << std::endl;
-    //ERROR IN GETTING KEY and ID CURRENTLY so there must be something wrong with response.message->get(MessageAttribute::INSERTHERE) or with how it is implemeted ie std::get
-   /* std::cout << "Key is "
+ 
+    //CURRENTLY WE DO NOT HAVE KEY AND ID SUPPORTED AS AN ATTRIBUTE TYPE OF StringMessage 
+    /*std::cout << "Key is "
               << std::get<std::string>(
                      response.message->get(MessageAttribute::KEY))
               << std::endl;
@@ -654,17 +627,17 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     BOOST_CHECK(
         std::get<std::string>(response.message->get(MessageAttribute::ID))
             .compare(id) == 0);
-*/
 
-    //FLAG HERE: May have to shift this to take into account STRINGMESSAGE payload function
+    */
     auto string_msg_content =
         std::get<std::string >(response.message->getPayload());
 
     std::cout<< "String Msg Content:" << std::endl;
     std::cout<< string_msg_content << std::endl;
         BOOST_CHECK(string_msg_content.compare("Something") == 0);
-
+   
   }
+
   std::cout << "FLAG 6" << std::endl;
 }
 BOOST_AUTO_TEST_SUITE_END()
