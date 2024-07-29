@@ -586,16 +586,28 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   MessageFactory msg_factory;
 
   const std::string token = "magic_token";
-  { // Client send
+  { // Client send post test
     auto msg_from_client = msg_factory.create(MessageType::STRING);
     msg_from_client->set(MessageAttribute::ID, id);
     msg_from_client->set(MessageAttribute::KEY, key);
 
-
-    msg_from_client->setPayload(std::string("Something"));
-
-    std::cout << "FLAG 4.05" << std::endl;
+    //We need to ensure there is a standard so first off we give the endpoint, then the Verb then the message.
+    //We later want to break this up once we do the send function we should break up each of these into seperate pieces for proper curl usage.
+    msg_from_client->setPayload(std::string("Endpoint:http://localhost:8080/api/post, Verb:POST, Body:{'fruit': 'apple'}"));
+    //curl -X POST http://127.0.0.1:8080/api/post -H "Content-Type: application/json" -d '{"fruit": "apple"'
     client->send(*msg_from_client);
+    std::cout << "FLAG 4.1" << std::endl;
+  }
+{ // Client send get test
+    auto msg_from_client2 = msg_factory.create(MessageType::STRING);
+    msg_from_client2->set(MessageAttribute::ID, id);
+    msg_from_client2->set(MessageAttribute::KEY, key);
+
+    //We need to ensure there is a standard so first off we give the endpoint, then the Verb then the message.
+    //We later want to break this up once we do the send function we should break up each of these into seperate pieces for proper curl usage.
+    msg_from_client2->setPayload(std::string("Endpoint:http://localhost:8080/api/fruits, Verb:GET, Body:{}"));
+    //curl -X POST http://127.0.0.1:8080/api/post -H "Content-Type: application/json" -d '{"fruit": "apple"'
+    client->send(*msg_from_client2);
     std::cout << "FLAG 4.1" << std::endl;
   }
   

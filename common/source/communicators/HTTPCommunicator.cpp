@@ -105,29 +105,50 @@ namespace SDMS{
     curl = curl_easy_init();
   
     if (curl) {
+
+        std::cout << "Parsing msg for curl opts" << std::endl;
+        //Parsing the message for the if statement below:
+        // Variables to store the parsed values
+        std::string endpoint, verb, body;
+        std::string messageString;
+
+        const auto& testPayload = message.getPayload();
+        messageString = std::get<std::string>(testPayload);
+
+        std::cout << "Message = " << messageString << std::endl;
+        parseCurlMessage(messageString, endpoint, verb, body);
+       
+
         std::cout << "Setting curl options" << std::endl;
         //Setting string buffer
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlResponseWriteCB);
 
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
         // Set CURL options: URL, HTTP method, headers, body, etc.
-        curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:8080"); // Set URL with localhost and port
-        curl_easy_setopt(curl, CURLOPT_PORT, 8080L); // Set port explicitly
-
+        curl_easy_setopt(curl, CURLOPT_URL, endpoint.c_str()); // Set URL with localhost and port
         // Example: Set headers if needed
         struct curl_slist *headers = NULL;
         headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        // Example: Set POST data if needed
-        curl_easy_setopt(curl, CURLOPT_POST, 1L);
-        const auto& payloadVariant = message.getPayload();
-        if (std::holds_alternative<std::string>(payloadVariant)) {
-            std::string payload = std::get<std::string>(payloadVariant);
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, payload.c_str());
+        
+        // Output the parsed values
+        std::cout << "Endpoint = " << endpoint << std::endl;
+        std::cout << "Verb = " << verb << std::endl;
+        std::cout << "Body = " << body << std::endl;
+        
+        //Put a check here that breaks the message and if it is a post then do the below if not then do whatever it says to do:
+        //msg_from_client->setPayload(std::string("Endpoint:/api/,Verb:POST,{}"));
+        if(verb == "POST"){
+          curl_easy_setopt(curl, CURLOPT_POST, 1);
+          curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
+        }
+        //Get Request
+        else if(verb == "GET"){
+          std::cout << "Yo we do be getting" << std::endl;
+          curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
         }
 
-        // Perform the request
+          // Perform the request
         res = curl_easy_perform(curl);
         
         // Check for errors
@@ -143,7 +164,6 @@ namespace SDMS{
         ICommunicator::Response response;
         MessageFactory msg_factory;
         response.message = msg_factory.create(MessageType::STRING);
-        
         response.message->setPayload(readBuffer); //CHANGED . to ->
         auto correlation_id_value = std::get<std::string>(message.get(MessageAttribute::CORRELATION_ID));
         std::cout << "Correlation ID: "<< correlation_id_value << std::endl;
