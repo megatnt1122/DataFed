@@ -115,7 +115,7 @@ namespace SDMS{
         const auto& testPayload = message.getPayload();
         messageString = std::get<std::string>(testPayload);
 
-        std::cout << "Message = " << messageString << std::endl;
+        //std::cout << "Message = " << messageString << std::endl;
         parseCurlMessage(messageString, endpoint, verb, body);
        
 
@@ -132,19 +132,18 @@ namespace SDMS{
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         
         // Output the parsed values
+        /*
         std::cout << "Endpoint = " << endpoint << std::endl;
         std::cout << "Verb = " << verb << std::endl;
         std::cout << "Body = " << body << std::endl;
-        
+        */
         //Put a check here that breaks the message and if it is a post then do the below if not then do whatever it says to do:
-        //msg_from_client->setPayload(std::string("Endpoint:/api/,Verb:POST,{}"));
         if(verb == "POST"){
           curl_easy_setopt(curl, CURLOPT_POST, 1);
           curl_easy_setopt(curl, CURLOPT_POSTFIELDS, body.c_str());
         }
         //Get Request
         else if(verb == "GET"){
-          std::cout << "Yo we do be getting" << std::endl;
           curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
         }
 
@@ -157,7 +156,6 @@ namespace SDMS{
                     curl_easy_strerror(res));
         }
         
-        std::cout << "ReadBuffer:" << readBuffer << std::endl;
         // Cleanup
         curl_slist_free_all(headers); // Free headers list
         curl_easy_cleanup(curl);
@@ -166,7 +164,7 @@ namespace SDMS{
         response.message = msg_factory.create(MessageType::STRING);
         response.message->setPayload(readBuffer); //CHANGED . to ->
         auto correlation_id_value = std::get<std::string>(message.get(MessageAttribute::CORRELATION_ID));
-        std::cout << "Correlation ID: "<< correlation_id_value << std::endl;
+       // std::cout << "Correlation ID: "<< correlation_id_value << std::endl;
         response.message->set(MessageAttribute::CORRELATION_ID, correlation_id_value); //changed . to ->
         // Store response in buffer
         responseBuffer.push_back(std::move(response)); // Assuming `response` is movable

@@ -543,11 +543,9 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
   // Create the client communicator
   const std::string server_id = "overlord";
   
-  std::cout << "FLAG 1" << std::endl;
 
   const std::string client_id = "ClientID";
   
-  std::cout << "FLAG 2" << std::endl;
   auto client = [&]() {
     /// Creating input parameters for constructing Communication Instance
     ///
@@ -593,10 +591,8 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
     //We need to ensure there is a standard so first off we give the endpoint, then the Verb then the message.
     //We later want to break this up once we do the send function we should break up each of these into seperate pieces for proper curl usage.
-    msg_from_client->setPayload(std::string("Endpoint:http://localhost:8080/api/post, Verb:POST, Body:{'fruit': 'apple'}"));
-    //curl -X POST http://127.0.0.1:8080/api/post -H "Content-Type: application/json" -d '{"fruit": "apple"'
+    msg_from_client->setPayload(std::string("Endpoint:http://localhost:8080/api/post, Verb:POST, Body:{'fruit': 'apple'}")); 
     client->send(*msg_from_client);
-    std::cout << "FLAG 4.1" << std::endl;
   }
 { // Client send get test
     auto msg_from_client2 = msg_factory.create(MessageType::STRING);
@@ -605,13 +601,10 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
     //We need to ensure there is a standard so first off we give the endpoint, then the Verb then the message.
     //We later want to break this up once we do the send function we should break up each of these into seperate pieces for proper curl usage.
-    msg_from_client2->setPayload(std::string("Endpoint:http://localhost:8080/api/fruits, Verb:GET, Body:{}"));
-    //curl -X POST http://127.0.0.1:8080/api/post -H "Content-Type: application/json" -d '{"fruit": "apple"'
+    msg_from_client2->setPayload(std::string("Endpoint:http://localhost:8080/api/fruits, Verb:GET, Body:{}")); 
     client->send(*msg_from_client2);
-    std::cout << "FLAG 4.1" << std::endl;
   }
   
-  std::cout << "FLAG 5" << std::endl;
   { // Client receive
     ICommunicator::Response response = 
     client->receive(MessageType::STRING);
@@ -619,7 +612,6 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
     BOOST_CHECK(response.error == false);
     BOOST_CHECK(response.message->type()==MessageType::STRING);
 
-    std::cout << "FLAG 5.1" << std::endl;
  
     //CURRENTLY WE DO NOT HAVE KEY AND ID SUPPORTED AS AN ATTRIBUTE TYPE OF StringMessage 
     /*std::cout << "Key is "
