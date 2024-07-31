@@ -28,10 +28,15 @@ def post_message():
 def get_fruits():
     return jsonify(fruits)
 
-@app.route('/api/another', methods=['GET'])
-def another_endpoint():
-    return jsonify({'message': 'This is another GET endpoint'})
+@app.route('/api/shutdown', methods=['POST'])
+def shutdown():
+    if 'werkzeug.server.shutdown' in request.environ:
+        func = request.environ.get('werkzeug.server.shutdown')
+        func()
+        return 'Server shutting down...'
+    else:
+        os.kill(os.getpid(), signal.SIGINT)
+        return 'Server shutting down...'
 
 if __name__ == '__main__':
-    print("Hi")
     app.run(host='127.0.0.1', port=8080, debug=True)

@@ -20,17 +20,16 @@ namespace SDMS {
   StringMessage::StringMessage(){
     boost::uuids::random_generator generator;
     boost::uuids::uuid uuid = generator();
-    m_attributes[MessageAttribute::CORRELATION_ID] =
-    boost::uuids::to_string(uuid);
+    m_attributes[MessageAttribute::CORRELATION_ID] = boost::uuids::to_string(uuid);
   }
-//checking if specific attributes exist
+  //checking if specific attributes exist
   bool StringMessage::exists(MessageAttribute attribute_type) const {
     return m_attributes.count(attribute_type) != 0;
   }
   //This is required due to inheriting from IMessage.hpp having this otherwise it breaks the abstraction
   bool StringMessage::exists(const std::string &attribute_type) const{
     return false;
-}
+  }
 
   //Setters
   void StringMessage::setPayload(std::variant<std::unique_ptr<::google::protobuf::Message>, std::string> payload){
@@ -51,6 +50,15 @@ namespace SDMS {
     }  
     else if (attribute_type == MessageAttribute::CORRELATION_ID) {
       m_attributes[MessageAttribute::CORRELATION_ID] = attribute;
+    }
+    else if (attribute_type == MessageAttribute::ENDPOINT) {
+      m_attributes[MessageAttribute::ENDPOINT] = attribute;
+    } 
+    else if (attribute_type == MessageAttribute::VERB) {
+      m_attributes[MessageAttribute::VERB] = attribute;
+    }
+    else if (attribute_type == MessageAttribute::BODY) {
+      m_attributes[MessageAttribute::BODY] = attribute;
     } 
     else {
     EXCEPT(1, "Attempt to add unsupported attribute to StringMessage.");

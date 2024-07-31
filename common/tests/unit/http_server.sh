@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Get the directory where this script is located
-SCRIPT_DIR="$(dirname "$0")"
-
+SCRIPT=$(realpath "$0")
+SOURCE=$(dirname "$SCRIPT")
 # Path to the Python script
-PYTHON_SCRIPT="${SCRIPT_DIR}/http_server.py"
+PYTHON_SCRIPT="${SOURCE}/http_server.py"
 
 # Print debugging information
-echo "SCRIPT_DIR: ${SCRIPT_DIR}"
+echo "SCRIPT_DIR: ${SOURCE}"
 echo "PYTHON_SCRIPT: ${PYTHON_SCRIPT}"
 
 # Check if the Python script exists
