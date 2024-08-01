@@ -644,8 +644,15 @@ BOOST_AUTO_TEST_CASE(testing_CommunicatorFactory_HTTP) {
 
     std::cout<< "String Msg Content:" << std::endl;
     std::cout<< string_msg_content << std::endl;
-        BOOST_CHECK(string_msg_content.compare("Something") == 0);
-   
+    std::string testResult = R"({
+  "data": {
+    "fruit": "apple"
+  },
+  "message": "POST request received"
+}
+)" ;
+       // std::cout << testResult << std::endl;
+        BOOST_CHECK(string_msg_content.compare(testResult) == 0);
   }
 
   std::cout << "Sending shutdown command to dummy server" << std::endl;
