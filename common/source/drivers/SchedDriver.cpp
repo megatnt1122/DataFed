@@ -15,7 +15,7 @@ namespace SDMS
   {
     return DRIVER_TYPE::SCHED_DRIVER;
   }
-  
+    
   bool SchedDriver::run() const
   {
     //This is where the main scheduling running will happen
@@ -25,15 +25,21 @@ namespace SDMS
     auto CO = ComplianceOfficer();
     //
     auto sched_manager = Manager();
-    auto scheduler = Scheduler();
-    //This is from external list
-    std::vector<Assignment> assignments = sched_manager.getAssignments();
+    auto scheduler = Scheduler(); 
     
-    //
-    for(Assignment& assignment : assignments)
+    //Was using Assignmetn&& but now im using auto as a cheap solution
+    for(const Assignment& assignment : sched_manager.popAssignments())
     {
+      //If verification fails - Check for each assignment verification, NOT BATCHES
+      if(CO.verifyTask(assignment) == false)
+        {
+          std::cout << "Error but continuing" << std::endl;
+          //RETURN AN ERROR BUT CONTINUE ON NEXT Assignment
+          continue;
+          //Add mnore here for error handling etc
+        }
     //  Verification is for the message mapping within the code
-    //  scheduler.setPriority(assignment)
+    scheduler.addAssignment(std::move(assignment)); //Maybe have assignment have apriority value?
     //  
     // 
     break;
@@ -48,7 +54,4 @@ namespace SDMS
 //    it then goes to the loop with a collection of assignments... we  will 
 //    verify in the manager, we will then schedule the assignment's priority within
 //    the internal list.
-//
-//
-//
-//
+

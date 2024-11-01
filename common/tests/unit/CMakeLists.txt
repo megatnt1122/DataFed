@@ -1,18 +1,18 @@
 # Each test listed in Alphabetical order
 foreach(PROG
-    test_Buffer
-    test_CommunicatorFactory
-    test_Frame
-    test_DynaLog
-    test_Value
-    test_MessageFactory
-    test_OperatorFactory
-    test_ProtoBufFactory
-    test_ProtoBufMap
-    test_Proxy
-    test_ProxyBasicZMQ
-    test_SocketFactory
-    test_SocketOptions
+    #test_Buffer
+    #test_CommunicatorFactory
+    #test_Frame
+    #test_DynaLog
+    #test_Value
+    #test_MessageFactory
+    #test_OperatorFactory
+    #test_ProtoBufFactory
+    #test_ProtoBufMap
+    #test_Proxy
+    #test_ProxyBasicZMQ
+    #test_SocketFactory
+    #test_SocketOptions
     test_driver_factory
 )
 

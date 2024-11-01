@@ -12,7 +12,14 @@ namespace SDMS
   {
     public:
       //make this return the assignment type
-      std::vector<Assignment> getAssignments() const;
+      std::vector<Assignment> popAssignments();
+      
+	  // Add functions to manage assignments
+      void addAssignment(Assignment&& assignment);
+      void printAssignments() const;
+      
+    private:
+        std::vector<Assignment> assignments; // Vector to hold Assignment objects
   };
 }
 #endif

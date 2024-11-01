@@ -16,7 +16,9 @@ if( BUILD_COMMON )
     "source/operators/*.cpp"
     "source/servers/*.cpp"
     "source/support/zeromq/*.cpp"
-    "source/sockets/*.cpp")
+    "source/sockets/*.cpp"
+    "source/helpers/*.cpp"
+    "source/drivers/*.cpp")
   if(BUILD_SHARED_LIBS)
     add_library( common SHARED ${Sources})
     target_link_libraries( common PUBLIC ${DATAFED_BOOST_DATE_TIME_LIBRARY_PATH} protobuf::libprotobuf libzmq datafed-protobuf) 

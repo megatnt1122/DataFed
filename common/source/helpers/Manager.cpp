@@ -5,8 +5,21 @@
 
 namespace SDMS
 {  
-  std::vector<Assignment> Manager::getAssignments() const
+  std::vector<Assignment> Manager::popAssignments() 
   {
-    return std::vector<Assignment>(); 
+    std::vector<Assignment> returnVector = std::move(assignments);
+    assignments.clear();
+    return std::move(returnVector); 
   }
+  
+  void Manager::addAssignment(Assignment&& assignment)
+  {
+	  assignments.push_back(std::move(assignment));
+  }
+
+  void Manager::printAssignments() const
+  {
+	  std::cout << "Number of assignments: " << assignments.size() << "\n";
+  }
+
 }

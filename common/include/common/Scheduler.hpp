@@ -3,14 +3,23 @@
 #pragma once
 
 #include "Assignment.hpp"
+#include "Priority.hpp"
+#include <vector>
 
 namespace SDMS 
 {
 
   class Scheduler
   {
-    public:
-      bool setPriority(Assignment assignment) const;
+   
+    std::vector<std::pair<int,Priority>> _internalList;
+    std::vector<Assignment> _internalAssignmentList;
+
+
+  public:
+    void addAssignment(Assignment assignment);
+  
+
   };
 }
 #endif

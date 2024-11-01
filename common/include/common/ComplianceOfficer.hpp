@@ -2,6 +2,8 @@
 #define COMPLIANCEOFFICER_HPP
 #pragma once
 
+#include "Assignment.hpp"
+
 namespace SDMS 
 {
 
@@ -9,7 +11,7 @@ namespace SDMS
   class ComplianceOfficer
   {
     public:
-      bool verifyTask(bool assignment) const;
+      bool verifyTask(const Assignment& assignment) const;
   };
 }
 #endif

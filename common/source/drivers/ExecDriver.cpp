@@ -27,7 +27,7 @@ namespace SDMS
     while(true)
     {
       //NOTE
-      auto assignment = sc.grabNextAssignment(internalList);
+     // auto assignment = sc.grabNextAssignment(internalList);
 
       //If assignment is to exit job site then exit loop
       //if(assignment == exit)
