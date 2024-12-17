@@ -17,13 +17,12 @@ namespace SDMS
       Worker& hireWorker(Assignment& assignment);
       void removeWorker();
       Assignment grabNextAssignment(std::vector<Assignment> internalList) const;
+      void checkWorkerStates();
 
       std::vector<Worker> m_workers;
       bool reachedMaxWorkers();
       int numOfWorkers = 0;
-     // boost::circular_buffer<Worker::WorkerState> state_buffer(5);
-
-
+     boost::circular_buffer<WorkerState> state_buffer;
   };
 }
 #endif

@@ -12,7 +12,6 @@ namespace SDMS
     numOfWorkers = numOfWorkers + 1;
     Worker returnWorker = Worker(assignment.getSkills());
     myFavoriteSCMutex.lock();
-    //m_workers.emplace_back(new Worker(assignment.getSkills()));
     auto testSkills = assignment.getSkills(); 
     m_workers.emplace_back(std::move(testSkills));
     myFavoriteSCMutex.unlock();
@@ -36,16 +35,15 @@ namespace SDMS
     numOfWorkers = numOfWorkers - 1;
   }
 
-  /*void StaffingCoordinator::checkWorkerStates()
+  void StaffingCoordinator::checkWorkerStates()
   {
     //First loop and check each worker state, copying those states into a circular buffer for debugging
-    for(worker : m_workers)
+    for(Worker& worker : m_workers)
     {
       std::cout << "Putting worker state into buffer"<< std::endl;
       state_buffer.push_back(worker.getState()); 
     }
   }
-  */
 }
 
 //Notes:

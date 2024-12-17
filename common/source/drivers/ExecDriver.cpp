@@ -92,7 +92,7 @@ namespace SDMS
         
       }
       //Add for loop to check working workers statuses
-      //sc.checkWorkerStates();
+      sc.checkWorkerStates();
 
       if(!keep_running.load())
       {
