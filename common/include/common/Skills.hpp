@@ -6,6 +6,7 @@ namespace SDMS
 {
   enum class Skills{ALLOC_CREATE,
                     ALLOC_DESTROY,
+                    ERROR_TEST,
                     EXIT};
 }
 #endif

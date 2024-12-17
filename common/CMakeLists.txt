@@ -15,6 +15,7 @@ if( BUILD_COMMON )
     "source/messages/*.cpp"
     "source/operators/*.cpp"
     "source/servers/*.cpp"
+    "source/tools/*.cpp"
     "source/support/zeromq/*.cpp"
     "source/sockets/*.cpp"
     "source/helpers/*.cpp"

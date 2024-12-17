@@ -1,36 +1,19 @@
 #define BOOST_TEST_MAIN
 
-#define BOOST_TEST_MODULE Manager 
+#define BOOST_TEST_MODULE scheduler_test 
 #include <boost/test/unit_test.hpp>
-#include "common/Manager.hpp"
+
+#include "common/Scheduler.hpp"
 #include "common/Assignment.hpp"
 
 using namespace SDMS;
 
-BOOST_AUTO_TEST_SUITE(test_manager)
+BOOST_AUTO_TEST_SUITE(SchedulerTest)
 
-BOOST_AUTO_TEST_CASE(testing_manager)
-{
-  Manager manager = Manager();
+BOOST_AUTO_TEST_CASE(testing_scheduler) {
 
-  std::vector<Skills> skills = {Skills::ALLOC_CREATE};
-  std::vector<ToolType> tools = {ToolType::GlobusApi};
-  Priority priority = Priority::High;
-  int id = 1;
-
-  Assignment testAssignment1(skills, tools, priority, id);
- 
-  //Add an assignment
-  manager.addAssignment(std::move(testAssignment1));
+  Scheduler scheduler(SchedulerOrder::FIFO);
   
-  //checking if manager got 
-  BOOST_CHECK(manager.popAssignments().at(0).getToolTypes().at(0) == ToolType::GlobusApi);
-}
-
-BOOST_AUTO_TEST_CASE(testing_managersize)
-{
-  Manager manager = Manager();
-
   std::vector<Skills> skills = {Skills::ALLOC_CREATE};
   std::vector<ToolType> tools = {ToolType::GlobusApi};
   Priority priority = Priority::High;
@@ -39,14 +22,29 @@ BOOST_AUTO_TEST_CASE(testing_managersize)
   Assignment testAssignment1(skills, tools, priority, id);
 
   //Add an assignment
-  manager.addAssignment(std::move(testAssignment1));
+  scheduler.addAssignment(std::move(testAssignment1));
   
   //check if true
-  BOOST_CHECK(manager.sizeAssignments() == 1);
-  manager.popAssignments();
-  BOOST_CHECK(manager.sizeAssignments() == 0);
+  BOOST_CHECK(scheduler.popAssignment().getToolTypes().at(0) == ToolType::GlobusApi);
+}
+
+BOOST_AUTO_TEST_CASE(testing_schedulerSize) {
+
+ Scheduler scheduler(SchedulerOrder::FIFO);
+
+  std::vector<Skills> skills = {Skills::ALLOC_CREATE};
+  std::vector<ToolType> tools = {ToolType::GlobusApi};
+  Priority priority = Priority::High;
+  int id = 1;
+
+  Assignment testAssignment1(skills, tools, priority, id);
 
 
+  //Add an assignment
+  scheduler.addAssignment(std::move(testAssignment1));
+  
+  //check if true
+  BOOST_CHECK(scheduler.sizeAssignments() == 1);
 }
 
 

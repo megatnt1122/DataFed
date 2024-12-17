@@ -10,7 +10,7 @@ namespace SDMS
   class InventoryManager
   {
     public:
-      bool getTools(bool skill,Assignment assignment); 
+      std::vector<std::shared_ptr<Tool>> getTools(Assignment& assignment); 
   };
 }
 #endif

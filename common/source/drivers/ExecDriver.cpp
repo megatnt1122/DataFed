@@ -4,54 +4,111 @@
 #include "common/InventoryManager.hpp"
 #include "common/Manager.hpp"
 #include "common/Worker.hpp"
+#include <boost/circular_buffer.hpp>
 #include <iostream>
+#include <vector>
+#include <thread>
+#include <memory>
+#include <chrono>
+
 
 namespace SDMS 
 {
+  ExecDriver::~ExecDriver()
+  {
+
+      if(m_thread.joinable())
+      {
+        m_thread.join();
+      }
+    
+  }
+
+  ExecDriver::ExecDriver(std::shared_ptr<Scheduler> external_scheduler, bool runThreadOnCreation)
+  {
+    internal_scheduler = external_scheduler;
+    keep_running.store(true);
+    std::cout << keep_running << std::endl;
+    if(runThreadOnCreation)
+    {
+      m_thread = std::thread(&ExecDriver::run, this);
+    }
+  }
 
   const DRIVER_TYPE ExecDriver::getType() const 
   {
     return DRIVER_TYPE::EXEC_DRIVER;
   }
 
-  bool ExecDriver::run() const
+  void ExecDriver::run() 
   {
+    std::cout << "Entered run" << std::endl;
+    //This is where the main scheduling running will happen
+    //Initialize Everything:
     
-    StaffingCoordinator sc;
-    InventoryManager im;
-    Manager exec_manager;
-
-    std::vector<Assignment> internalList;
-
-    //Change this to check if theres another task avaliable
-    while(true)
+    //Initialize
+    boost::circular_buffer<Assignment> error_buffer(5);
+    std::cout << "Passed error buffer" << std::endl;
+    std::cout << keep_running.load() << std::endl; 
+    Assignment assignment;
+    while(keep_running.load())
     {
-      //NOTE
-     // auto assignment = sc.grabNextAssignment(internalList);
+      std::cout << "Yoooo" << std::endl;
+      std::cout << internal_scheduler->sizeAssignments() << std::endl;
+      while(internal_scheduler->sizeAssignments() > 0 and !sc.reachedMaxWorkers())
+      {
+        std::cout << "Entering internal while" << std::endl;
 
-      //If assignment is to exit job site then exit loop
-      //if(assignment == exit)
-      if(true)
+        std::cout << "Attempting to lock" << std::endl;
+        mySecondFavoriteDriverMutex.lock();
+        std::cout << "Popping assignment" << std::endl;
+        assignment = internal_scheduler->popAssignment();
+        std::cout << "Unlocking" << std::endl;
+        mySecondFavoriteDriverMutex.unlock();
+        if(assignment.getSkills().at(0) == Skills::EXIT)
+        {
+      
+          std::cout << "Exitting" << std::endl;
+          stop();
+          break;
+        }
+        std::cout << "Midpoint" << std::endl;
+        std::cout << internal_scheduler->sizeAssignments() << std::endl;
+        //Hiring worker based off assignment | Maybe give the assignment to the worker - perhaps worker has a skill attached for below
+        Worker& worker = sc.hireWorker(assignment);
+        std::cout << "After hiring a worker" << std::endl;
+        std::cout << internal_scheduler->sizeAssignments() << std::endl;
+        
+        //Get appropriate tools | assignment and worker would be used to dictate appropriate tools
+        std::vector<std::shared_ptr<Tool>> tools = im.getTools(assignment);
+        //Worker uses tools to do work 
+        
+        worker.execute(std::move(assignment), tools); //this execute would have a while within
+        //
+        //manager.updateAssignment(std::move(assignment));
+        //
+        //sc.reassignWorker(worker)
+        //
+        
+      }
+      //Add for loop to check working workers statuses
+      //sc.checkWorkerStates();
+
+      if(!keep_running.load())
       {
         break;
       }
-      
-      //Hiring worker based off assignment | Maybe give the assignment to the worker - perhaps worker has a skill attached for below
-      //worker = sc.hireWorker(assignment)
-      //
-      //Get appropriate tools | assignment and worker would be used to dictate appropriate tools
-      //tools = im.getTools(worker.skill, assignment)
-      //
-      //Worker uses tools to do work 
-      //assignment = worker.execute(assignment, tools) //this execute would have a while within
-      //
-      //manager.updateAssignment(assignment)
-      //
-      //sc.reassignWorker(worker)
-      //
-      return true;
-    }  
+      return;
+    } 
   }
+
+
+  void ExecDriver::stop()
+  {
+    keep_running.store(false);
+  }
+
+
 }
 
 //NOTES:

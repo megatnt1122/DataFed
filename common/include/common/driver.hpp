@@ -14,7 +14,7 @@ namespace SDMS
   {
     public: 
       virtual const DRIVER_TYPE getType() const = 0;
-      virtual bool run() const = 0;
+      virtual void run() = 0;
   };
 
 }

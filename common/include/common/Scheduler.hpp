@@ -4,22 +4,27 @@
 
 #include "Assignment.hpp"
 #include "Priority.hpp"
+#include "SchedulerOrder.hpp"
 #include <vector>
+#include <mutex>
 
 namespace SDMS 
 {
 
   class Scheduler
   {
-   
+     
     std::vector<std::pair<int,Priority>> _internalList;
     std::vector<Assignment> _internalAssignmentList;
-
+    SchedulerOrder m_sort_order = SchedulerOrder::FIFO;
+    mutable std::mutex myFavoriteMutex;
 
   public:
-    void addAssignment(Assignment assignment);
-  
-
+    Scheduler(){};
+    Scheduler(const SchedulerOrder sort_order) : m_sort_order(sort_order) {};
+    void addAssignment(Assignment&& assignment);
+    Assignment popAssignment();
+    int sizeAssignments() const;
   };
 }
 #endif

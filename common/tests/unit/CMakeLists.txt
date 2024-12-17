@@ -14,6 +14,9 @@ foreach(PROG
     #test_SocketFactory
     #test_SocketOptions
     test_driver_factory
+    test_scheduler
+    test_manager
+    test_compliance_officer
 )
 
   include_directories(${PROJECT_SOURCE_DIR}/common/source)

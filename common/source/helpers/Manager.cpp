@@ -2,24 +2,29 @@
 #include "common/Assignment.hpp"
 #include <iostream>
 #include <vector>
+#include <mutex>
 
 namespace SDMS
 {  
   std::vector<Assignment> Manager::popAssignments() 
   {
+    myFavoriteManagerMutex.lock();
     std::vector<Assignment> returnVector = std::move(assignments);
     assignments.clear();
-    return std::move(returnVector); 
+    myFavoriteManagerMutex.unlock();
+    return returnVector; 
   }
   
   void Manager::addAssignment(Assignment&& assignment)
   {
+    std::lock_guard<std::mutex> lock(myFavoriteManagerMutex);
 	  assignments.push_back(std::move(assignment));
   }
 
-  void Manager::printAssignments() const
+  int Manager::sizeAssignments() const
   {
-	  std::cout << "Number of assignments: " << assignments.size() << "\n";
+    std::lock_guard<std::mutex> lock(myFavoriteManagerMutex);
+	  return assignments.size();
   }
 
 }

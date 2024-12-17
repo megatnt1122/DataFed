@@ -12,9 +12,14 @@ namespace SDMS
       return _skills;
     }
 
-    const std::vector<Tools>& Assignment::getTools() const
+    std::vector<Skills> Assignment::getSkills()
     {
-      return _tools;
+      return _skills;
+    }
+
+    const std::vector<ToolType>& Assignment::getToolTypes() const
+    {
+      return _toolTypes;
     }
     
     const Priority& Assignment::getPriority() const
@@ -27,4 +32,13 @@ namespace SDMS
       return _Id;
     }
 
+    void Assignment::setState(AssignmentState newState)
+    {
+      assignmentState = newState;
+    }
+
+    AssignmentState Assignment::getState() const
+    {
+      return assignmentState;
+    }
 }
